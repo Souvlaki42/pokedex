@@ -1,14 +1,20 @@
-import usePokemon from "@/hooks/usePokemon";
+import usePokemon from "@/lib/usePokemon";
 import Link from "next/link";
-import styles from "@/styles/PokemonEntry.module.css";
-import { Spinner } from "react-bootstrap";
+import styles from "./PokemonEntry.module.css";
+import { Spinner } from "@/lib/bootstrap";
 import Image from "next/image";
 
-export default function PokemonEntry({ name }: { name: string }) {
+export default function PokemonEntry({
+	name,
+	pageNumber,
+}: {
+	name: string;
+	pageNumber: number;
+}) {
 	const { pokemon, pokemonLoading } = usePokemon(name);
 
 	return (
-		<Link href={`/${name}`}>
+		<Link href={`/${name}?page=${pageNumber}`}>
 			<div className={styles.entry}>
 				{pokemonLoading && <Spinner animation="grow" />}
 				{pokemon && (

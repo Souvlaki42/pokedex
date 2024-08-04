@@ -1,16 +1,19 @@
-import { useRouter } from "next/router";
-import Head from "next/head";
+"use client";
+
+import usePokemon from "@/lib/usePokemon";
 import Link from "next/link";
-import { Button, Form, Spinner } from "react-bootstrap";
-import Image from "next/image";
-import usePokemon from "@/hooks/usePokemon";
 import { FormEvent } from "react";
-import * as PokemonApi from "@/network/pokemon-api";
+import { Spinner, Form, Button } from "@/lib/bootstrap";
+import Image from "next/image";
+import { setNickname } from "@/lib/api";
 
-export default function PokemonnDetailsPage() {
-	const router = useRouter();
-	const pokemonName = router.query.pokemon?.toString() ?? "";
-
+export const PokemonDisplay = ({
+	pokemonName,
+	pageNumber,
+}: {
+	pokemonName: string;
+	pageNumber: number;
+}) => {
 	const { pokemon, pokemonLoading, mutatePokemon } = usePokemon(pokemonName);
 
 	const handleSubmitNickname = async (e: FormEvent<HTMLFormElement>) => {
@@ -22,19 +25,16 @@ export default function PokemonnDetailsPage() {
 
 		if (!pokemon || !nickname) return;
 
-		const update = await PokemonApi.setNickname(pokemon, nickname);
+		const update = await setNickname(pokemon, nickname);
 
 		mutatePokemon(update, { revalidate: false });
 	};
 
 	return (
 		<>
-			<Head>
-				{pokemon && <title>{`${pokemon.name} - Next.js PokèDex`}</title>}
-			</Head>
 			<div className="d-flex flex-column align-items-center">
 				<p>
-					<Link href="/" className="link-light">
+					<Link href={`/?page=${pageNumber}`} className="link-light">
 						← PokèDex
 					</Link>
 				</p>
@@ -77,4 +77,4 @@ export default function PokemonnDetailsPage() {
 			</div>
 		</>
 	);
-}
+};
